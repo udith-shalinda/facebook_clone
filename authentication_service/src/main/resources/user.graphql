@@ -1,0 +1,15 @@
+schema  {
+    query:Query
+}
+
+type Query{
+    user(email : String):User
+}
+
+type User{
+    id:ObjectId
+    email:String
+    password:String
+    name:String
+    status:String
+}

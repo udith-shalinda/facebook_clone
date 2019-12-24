@@ -7,7 +7,7 @@ type Query{
 }
 
 type User{
-    id:ObjectId
+    id:String
     email:String
     password:String
     name:String

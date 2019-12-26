@@ -42,11 +42,11 @@
 			<artifactId>graphql-java-tools</artifactId>
 			<version>3.2.0</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
-		</dependency> -->
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

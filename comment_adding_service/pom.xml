@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.udith</groupId>
-	<artifactId>post_adding_service</artifactId>
+	<artifactId>comment_adding_service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>post_adding_service</name>
+	<name>comment_adding_service</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -21,13 +21,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

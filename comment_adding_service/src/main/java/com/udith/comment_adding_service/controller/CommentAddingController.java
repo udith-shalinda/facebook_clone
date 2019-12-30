@@ -46,10 +46,9 @@ public class CommentAddingController{
         }
     }
 
-    @GetMapping("getOneComment/{commentId}")
-    public void getMethodName(@PathVariable("commentId") String commentId) {
-        // return this.commentAddingRepository.findById(new ObjectId(commentId));
-        System.out.println(commentId);
+    @GetMapping("getComments/{commentListId}")
+    public CommentList getMethodName(@PathVariable("commentListId") String commentListId) {
+        return this.commentAddingRepository.findById(new ObjectId(commentListId));
     }
     
     

@@ -23,13 +23,31 @@ public class User{
     private List<String> RecievedFriendRequests = new ArrayList<>();
 
     public void addFriend(String friendId){
-        this.friends.add(friendId);
+        if(friends== null ||friends.size()==0){
+            List<String> list = new ArrayList<>();
+            list.add(friendId);
+            this.friends = list;
+        }else{
+            this.friends.add(friendId);
+        }
     }
     public void addSendFriendRequest(String friendId){
-        this.sentFriendRequest.add(friendId);
+        if(sentFriendRequest== null ||sentFriendRequest.size()==0){
+            List<String> list = new ArrayList<>();
+            list.add(friendId);
+            this.sentFriendRequest = list;
+        }else{
+            this.sentFriendRequest.add(friendId);
+        }
     }
     public void addRecievedFriendRequest(String friendId){
-        this.RecievedFriendRequests.add(friendId);
+        if(RecievedFriendRequests== null ||RecievedFriendRequests.size()==0){
+            List<String> list = new ArrayList<>();
+            list.add(friendId);
+            this.RecievedFriendRequests = list;
+        }else{
+            this.RecievedFriendRequests.add(friendId);
+        }
     }
 
     public void removeFriend(String friendId){

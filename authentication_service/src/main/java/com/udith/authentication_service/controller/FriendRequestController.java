@@ -27,6 +27,7 @@ public class FriendRequestController{
         try {
             User me = this.userRepository.findById(new ObjectId(friendRequest.getMyId()));
             User friend = this.userRepository.findById(new ObjectId(friendRequest.getFriendId()));
+            me.setName("pubudu sandeepa");
             me.addSendFriendRequest(friendRequest.getFriendId());
             friend.addRecievedFriendRequest(friendRequest.getMyId());
             this.userRepository.save(me);

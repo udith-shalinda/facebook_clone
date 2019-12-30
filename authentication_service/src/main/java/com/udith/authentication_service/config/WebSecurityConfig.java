@@ -51,7 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/authenticate",
                         "/user/save",
-                        "/user/login"
+                        "/user/login",
+                        "/friendRequest/**"
                         ).permitAll().
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().

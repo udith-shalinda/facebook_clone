@@ -34,11 +34,15 @@ public class PostAddingController{
 
     @PostMapping("/addComment/{postId}")
     public String addComment(@PathVariable("postId")String postId,@RequestBody Comment comment ){
-        String commentId = restTemplate.postForObject("http://comments-adding/api/comment/add",comment,String.class);
         try{
             Post post = this.postRepository.findById(new ObjectId(postId));
-            post.addCommentId(commentId);
-            this.postRepository.save(post);
+            if(post.getCommentsId() != null){
+                restTemplate.postForObject("http://comments-adding/api/comment/add/"+post.getCommentsId(),comment,String.class);
+            }else{
+                String commentId = restTemplate.postForObject("http://comments-adding/api/comment/add/firstComment",comment,String.class);
+                post.setCommentsId(commentId);
+                this.postRepository.save(post);
+            }
             return post.getId().toString();
         }catch(Exception e){
             return "post not found";

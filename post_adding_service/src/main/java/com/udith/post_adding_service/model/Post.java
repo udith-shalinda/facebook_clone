@@ -17,9 +17,5 @@ public class Post{
     private String title;
     private String subTitle;
     private List<String> imageLinks = new ArrayList<>();
-    private List<String> comments = new ArrayList<>();
-
-    public void addCommentId(String commentId){
-        this.comments.add(commentId);
-    }
+    private String commentsId;
 }

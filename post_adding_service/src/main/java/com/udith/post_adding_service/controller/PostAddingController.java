@@ -10,7 +10,6 @@ import com.udith.post_adding_service.repository.PostRepository;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,13 +36,14 @@ public class PostAddingController{
         try{
             Post post = this.postRepository.findById(new ObjectId(postId));
             if(post.getCommentsId() != null){
-                restTemplate.postForObject("http://comments-adding/api/comment/add/"+post.getCommentsId(),comment,String.class);
+                String commentListId = restTemplate.postForObject("http://comments-adding/api/comment/add/"+post.getCommentsId().toString(),comment,String.class);
+                return commentListId;
             }else{
                 String commentId = restTemplate.postForObject("http://comments-adding/api/comment/add/firstComment",comment,String.class);
                 post.setCommentsId(commentId);
                 this.postRepository.save(post);
+                return post.getId().toString();
             }
-            return post.getId().toString();
         }catch(Exception e){
             return "post not found";
         }

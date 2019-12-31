@@ -29,7 +29,7 @@ public class PostAddingController{
     @PostMapping("/add")
     public String addPost(@RequestBody Post post) {
         Post resPost = this.postRepository.save(post);
-        String res = restTemplate.postForObject("http://user-service/api/post/add/"+post.getId()+"/"+post.getUserId(),null,String.class);
+        String res = restTemplate.postForObject("http://user-service/api/post/add/"+post.getId().toString()+"/"+post.getUserId(),null,String.class);
         return resPost.getId().toString()+res;
     }
 
@@ -67,6 +67,22 @@ public class PostAddingController{
             return "post not found";
         }
     }
+
+    @PostMapping("/reshare")
+    public String postMethodName(@RequestBody LikeModel likeModel) {
+        try {
+            Post post  = this.postRepository.findById(new ObjectId(likeModel.getPostId()));
+            post.setReshareId(post.getId().toString());
+            post.setId(new ObjectId());
+            Post resPost = this.postRepository.save(post);
+            String res = restTemplate.postForObject("http://user-service/api/post/add/"+resPost.getId().toString()+"/"+post.getUserId(),null,String.class);
+            return resPost.getId().toString()+res;
+        } catch (Exception e) {
+            return "post not found";
+        }
+        
+    }
+    
 
     
 }

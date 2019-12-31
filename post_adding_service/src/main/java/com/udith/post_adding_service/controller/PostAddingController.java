@@ -5,14 +5,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.udith.post_adding_service.model.Comment;
+import com.udith.post_adding_service.model.LikeModel;
 import com.udith.post_adding_service.model.Post;
 import com.udith.post_adding_service.repository.PostRepository;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,9 +57,15 @@ public class PostAddingController{
         return "sfsfs";
     }
 
-    @PostMapping("/addLike/{userId}")
-    public String addLike(@PathVariable("userId")String userId){
-        return userId;
+    @PostMapping("/addLike")
+    public String addLike(@RequestBody LikeModel likeModel){
+        try {
+            Post post  = this.postRepository.findById(new ObjectId(likeModel.getPostId()));
+            post.addLike(likeModel.getUserId());
+            return "successfully liked";
+        } catch (Exception e) {
+            return "post not found";
+        }
     }
 
     

@@ -4,6 +4,7 @@ import com.udith.authentication_service.model.User;
 import com.udith.authentication_service.repository.UserRepository;
 import com.udith.authentication_service.service.GraphQLService;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import graphql.ExecutionResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/user")
@@ -36,4 +41,14 @@ public class UserController{
         ExecutionResult execute =  graphQLServie.getGraphQL().execute(query);
         return new ResponseEntity<Object>(execute,HttpStatus.OK);
     }
+
+    @GetMapping("/oneUser/{userId}")
+    public User getMethodName(@PathVariable("userId")String userId) {
+        try {
+            return this.userRepository.findById(new ObjectId(userId));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
 }

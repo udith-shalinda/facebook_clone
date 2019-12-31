@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+
 import com.udith.post_adding_service.model.Comment;
 import com.udith.post_adding_service.model.LikeModel;
 import com.udith.post_adding_service.model.Post;
@@ -11,9 +12,13 @@ import com.udith.post_adding_service.repository.PostRepository;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 
@@ -29,7 +34,8 @@ public class PostAddingController{
     @PostMapping("/add")
     public String addPost(@RequestBody Post post) {
         Post resPost = this.postRepository.save(post);
-        String res = restTemplate.postForObject("http://user-service/api/post/add/"+post.getId().toString()+"/"+post.getUserId(),null,String.class);
+        String res = restTemplate.postForObject("http://user-service/api/post/add/"
+            +post.getId().toString()+"/"+post.getUserId(),null,String.class);
         return resPost.getId().toString()+res;
     }
 
@@ -38,10 +44,12 @@ public class PostAddingController{
         try{
             Post post = this.postRepository.findById(new ObjectId(postId));
             if(post.getCommentsId() != null){
-                String commentListId = restTemplate.postForObject("http://comments-adding/api/comment/add/"+post.getCommentsId().toString(),comment,String.class);
+                String commentListId = restTemplate.postForObject("http://comments-adding/api/comment/add/"
+                    +post.getCommentsId().toString(),comment,String.class);
                 return commentListId;
             }else{
-                String commentId = restTemplate.postForObject("http://comments-adding/api/comment/add/firstComment",comment,String.class);
+                String commentId = restTemplate.postForObject("http://comments-adding/api/comment/add/firstComment",
+                    comment,String.class);
                 post.setCommentsId(commentId);
                 this.postRepository.save(post);
                 return post.getId().toString();
@@ -69,18 +77,26 @@ public class PostAddingController{
     }
 
     @PostMapping("/reshare")
-    public String postMethodName(@RequestBody LikeModel likeModel) {
+    public String resharePost(@RequestBody LikeModel likeModel) {
         try {
             Post post  = this.postRepository.findById(new ObjectId(likeModel.getPostId()));
-            post.setReshareId(post.getId().toString());
-            post.setId(new ObjectId());
-            Post resPost = this.postRepository.save(post);
-            String res = restTemplate.postForObject("http://user-service/api/post/add/"+resPost.getId().toString()+"/"+post.getUserId(),null,String.class);
+            Post newPost = new Post();
+            newPost.setReshareId(post.getId().toString());
+            //have to add public or only friends;
+            Post resPost = this.postRepository.save(newPost);
+            String res = restTemplate.postForObject("http://user-service/api/post/add/"
+                +resPost.getId().toString()+"/"+post.getUserId(),null,String.class);
             return resPost.getId().toString()+res;
         } catch (Exception e) {
             return "post not found";
         }
         
+    }
+    
+    @GetMapping("/get/{page}/{count}")
+    public Page<Post> getPosts(@PathVariable("page") int page,@PathVariable("count") int count) {
+        Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
+        return post;
     }
     
 

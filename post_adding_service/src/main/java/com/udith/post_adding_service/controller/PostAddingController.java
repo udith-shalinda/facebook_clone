@@ -10,6 +10,9 @@ import com.udith.post_adding_service.repository.PostRepository;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +31,8 @@ public class PostAddingController{
     @PostMapping("/add")
     public String addPost(@RequestBody Post post) {
         Post resPost = this.postRepository.save(post);
-        return resPost.getId().toString();
+        String res = restTemplate.postForObject("http://user-service/api/post/add/"+post.getId()+"/"+post.getUserId(),null,String.class);
+        return resPost.getId().toString()+res;
     }
 
     @PostMapping("/addComment/{postId}")

@@ -21,6 +21,7 @@ public class User{
     private List<String> friends=new ArrayList<>();
     private List<String> sentFriendRequest = new ArrayList<>();
     private List<String> RecievedFriendRequests = new ArrayList<>();
+    private List<String> postsIdList = new ArrayList<>();
 
     public void addFriend(String friendId){
         if(friends== null ||friends.size()==0){
@@ -49,6 +50,16 @@ public class User{
             this.RecievedFriendRequests.add(friendId);
         }
     }
+    public void addPostToList(String postId){
+        if(postsIdList== null ||postsIdList.size()==0){
+            List<String> list = new ArrayList<>();
+            list.add(postId);
+            this.postsIdList = list;
+        }else{
+            this.postsIdList.add(postId);
+        }
+    }
+
 
     public void removeFriend(String friendId){
         this.friends.remove(friendId);
@@ -58,5 +69,8 @@ public class User{
     }
     public void removeRecievedFriendRequest(String friendId){
         this.RecievedFriendRequests.remove(friendId);
+    }
+    public void removePostId(String postId){
+        this.postsIdList.remove(postId);
     }
 }

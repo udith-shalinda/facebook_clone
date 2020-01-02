@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 
 import com.udith.authentication_service.repository.UserRepository;
 import com.udith.authentication_service.service.data_fetcher.FetchUser;
+import com.udith.authentication_service.service.data_fetcher.FetchUserById;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class GraphQLService {
     private GraphQL graphQL;
     @Autowired
     private FetchUser fetchUser;
+    @Autowired
+    private FetchUserById fetchUserById;
 
     // load schema at application start up
     @PostConstruct
@@ -44,8 +47,12 @@ public class GraphQLService {
         // parse schema
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(schemaFile);
         RuntimeWiring wiring = buildRuntimeWiring();
+        RuntimeWiring wiring2 = buildRuntimeWiringUserId();
         GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring);
+        GraphQLSchema schema2 = new SchemaGenerator().makeExecutableSchema(typeRegistry, wiring2);
         graphQL = GraphQL.newGraphQL(schema).build();
+        graphQL = GraphQL.newGraphQL(schema2).build();
+
     }
 
 //     private void loadDataIntoHSQL() {
@@ -72,6 +79,13 @@ public class GraphQLService {
         return RuntimeWiring.newRuntimeWiring()
                 .type("Query", typeWiring -> typeWiring
                         .dataFetcher("user", fetchUser))
+                .build();
+    }
+
+    private RuntimeWiring buildRuntimeWiringUserId() {
+        return RuntimeWiring.newRuntimeWiring()
+                .type("Query", typeWiring -> typeWiring
+                        .dataFetcher("user", fetchUserById))
                 .build();
     }
 

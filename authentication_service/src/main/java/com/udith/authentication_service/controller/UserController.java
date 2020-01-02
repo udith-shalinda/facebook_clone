@@ -52,10 +52,7 @@ public class UserController{
         }
     }
 
-    // public ResponseEntity<Object> loginUser(@RequestBody String query){
-    //     ExecutionResult execute =  graphQLServie.getGraphQL().execute(query);
-    //     return new ResponseEntity<Object>(execute,HttpStatus.OK);
-    // }
+    
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody User inputUser){
         try {
@@ -82,6 +79,12 @@ public class UserController{
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @PostMapping("/getOneUserDetails")
+    public ResponseEntity<Object> loginUser(@RequestBody String query){
+        ExecutionResult execute =  graphQLServie.getGraphQL().execute(query);
+        return new ResponseEntity<Object>(execute,HttpStatus.OK);
     }
     
 }

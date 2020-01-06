@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/save",
                         "/user/login",
                         "/friendRequest/**",
-                        "/user/getOneUserDetails"
+                        "/user/oneUser/**"
                         ).permitAll().
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().

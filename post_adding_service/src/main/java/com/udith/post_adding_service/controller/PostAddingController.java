@@ -4,12 +4,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.udith.post_adding_service.model.Comment;
 import com.udith.post_adding_service.model.LikeModel;
 import com.udith.post_adding_service.model.Post;
 import com.udith.post_adding_service.model.PostResponse;
+import com.udith.post_adding_service.model.User;
 import com.udith.post_adding_service.repository.PostRepository;
 
 import org.bson.types.ObjectId;
@@ -97,32 +100,20 @@ public class PostAddingController{
     }
     
     @PostMapping("/get/{page}/{count}")
-    public List<Post> getPosts(@PathVariable("page") int page,@PathVariable("count") int count,@RequestBody LikeModel user) {
-        System.out.println(user.getUserId());
+    public List<PostResponse> getPosts(@PathVariable("page") int page,@PathVariable("count") int count,@RequestBody LikeModel user) {
+        // System.out.println(user.getUserId());
         Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
+        // List<PostResponse> postResponseList = new ArrayList<>();
 
         // PostResponse postResponse;
-        for(Post inputPost:post.getContent()){
-            // postResponse = new PostResponse(inputPost.getTitle(),inputPost.getSubTitle(),inputPost.getUserId());
-            try {
-                String reqBody= "{"
-                    +"user("
-                    +"id:'5e00ae40b479aa2d726ac955'"
-                    +"){"
-                        +"email"
-                    +"}"
-                +"}";
-                ResponseEntity<Object> res = restTemplate.postForObject("http://user-service/api/user/getOneUserDetails",reqBody,ResponseEntity.class);
-                System.out.println(res);
-            } catch (Exception e) {
-                //TODO: handle exception
-                System.out.println("exeption");
-            }
-            
-        }
 
-        System.out.println(post.getContent());
-        return post.getContent();
+        return post.getContent().stream().map(p->{
+            PostResponse postResponse = new PostResponse(p);
+            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/5e0b62023b75dd60e22edaad", User.class);
+            postResponse.setUserDetails(res);
+            // postResponseList.add(postResponse);
+            return postResponse;
+        }).collect(Collectors.toList());
     }
     
 

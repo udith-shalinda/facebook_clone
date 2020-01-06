@@ -75,8 +75,11 @@ public class UserController{
     @GetMapping("/oneUser/{userId}")
     public User getMethodName(@PathVariable("userId")String userId) {
         try {
-            return this.userRepository.findById(new ObjectId(userId));
+            User user = this.userRepository.findById(new ObjectId(userId));
+            System.out.println(user);
+            return user;
         } catch (Exception e) {
+            System.out.println("error");
             return null;
         }
     }
@@ -85,6 +88,14 @@ public class UserController{
     public ResponseEntity<Object> loginUser(@RequestBody String query){
         ExecutionResult execute =  graphQLServie.getGraphQL().execute(query);
         return new ResponseEntity<Object>(execute,HttpStatus.OK);
+    }
+    @PostMapping("/update/{userId}")
+    public String updateUser(@PathVariable("userId")String userId,@RequestBody User user){
+        User oldUser = this.userRepository.findById(new ObjectId(userId));
+        oldUser.setName(user.getName());
+        oldUser.setStatus(user.getStatus());
+        this.userRepository.save(oldUser);
+        return "user updated";
     }
     
 }

@@ -16,7 +16,7 @@ public class PostResponse{
     private boolean liked;
     private int likeCount;
     private int shareCount;
-    private User userDetails;
+    private UserResponse userDetails;
     private List<Comment> commentList;
     private int CommentCount;
 

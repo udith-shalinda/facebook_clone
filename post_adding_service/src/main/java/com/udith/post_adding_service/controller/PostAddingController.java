@@ -13,6 +13,7 @@ import com.udith.post_adding_service.model.LikeModel;
 import com.udith.post_adding_service.model.Post;
 import com.udith.post_adding_service.model.PostResponse;
 import com.udith.post_adding_service.model.User;
+import com.udith.post_adding_service.model.UserResponse;
 import com.udith.post_adding_service.repository.PostRepository;
 
 import org.bson.types.ObjectId;
@@ -109,9 +110,11 @@ public class PostAddingController{
 
         return post.getContent().stream().map(p->{
             PostResponse postResponse = new PostResponse(p);
+            if(user.getUserId().equals(p.getUserId())){
+                postResponse.setOwner(true);
+            }
             User res = restTemplate.getForObject("http://user-service/api/user/oneUser/5e0b62023b75dd60e22edaad", User.class);
-            postResponse.setUserDetails(res);
-            // postResponseList.add(postResponse);
+            postResponse.setUserDetails(new UserResponse(res));
             return postResponse;
         }).collect(Collectors.toList());
     }

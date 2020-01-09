@@ -4,14 +4,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.udith.post_adding_service.model.Comment;
 import com.udith.post_adding_service.model.LikeModel;
 import com.udith.post_adding_service.model.Post;
 import com.udith.post_adding_service.model.PostResponse;
+import com.udith.post_adding_service.model.PostResponseList;
 import com.udith.post_adding_service.model.User;
 import com.udith.post_adding_service.model.UserResponse;
 import com.udith.post_adding_service.repository.PostRepository;
@@ -20,11 +19,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 
@@ -101,14 +98,10 @@ public class PostAddingController{
     }
     
     @PostMapping("/get/{page}/{count}")
-    public List<PostResponse> getPosts(@PathVariable("page") int page,@PathVariable("count") int count,@RequestBody LikeModel user) {
-        // System.out.println(user.getUserId());
+    public PostResponseList getPosts(@PathVariable("page") int page,@PathVariable("count") int count,@RequestBody LikeModel user) {
         Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
-        // List<PostResponse> postResponseList = new ArrayList<>();
 
-        // PostResponse postResponse;
-
-        return post.getContent().stream().map(p->{
+        return new PostResponseList(post.getContent().stream().map(p->{
             PostResponse postResponse = new PostResponse(p);
             if(user.getUserId().equals(p.getUserId())){
                 postResponse.setOwner(true);
@@ -116,7 +109,7 @@ public class PostAddingController{
             User res = restTemplate.getForObject("http://user-service/api/user/oneUser/5e0b62023b75dd60e22edaad", User.class);
             postResponse.setUserDetails(new UserResponse(res));
             return postResponse;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()));
     }
     
 

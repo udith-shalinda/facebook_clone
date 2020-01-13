@@ -108,6 +108,10 @@ public class PostAddingController{
             }
             User res = restTemplate.getForObject("http://user-service/api/user/oneUser/5e0b62023b75dd60e22edaad", User.class);
             postResponse.setUserDetails(new UserResponse(res));
+            
+            
+
+
             return postResponse;
         }).collect(Collectors.toList()));
     }

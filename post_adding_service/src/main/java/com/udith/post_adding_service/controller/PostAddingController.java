@@ -100,7 +100,7 @@ public class PostAddingController{
     @PostMapping("/get/{page}/{count}")
     public PostResponseList getPosts(@PathVariable("page") int page,@PathVariable("count") int count,@RequestBody LikeModel user) {
         Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
-
+        System.out.println(post);
         return new PostResponseList(post.getContent().stream().map(p->{
             PostResponse postResponse = new PostResponse(p);
             if(user.getUserId().equals(p.getUserId())){

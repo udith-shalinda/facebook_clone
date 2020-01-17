@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.udith.authentication_service.config.JwtTokenUtil;
 import com.udith.authentication_service.model.TokenResponse;
 import com.udith.authentication_service.model.User;
+import com.udith.authentication_service.model.UserResponse;
 import com.udith.authentication_service.repository.UserRepository;
 import com.udith.authentication_service.service.GraphQLService;
 
@@ -73,11 +74,11 @@ public class UserController{
     }
 
     @GetMapping("/oneUser/{userId}")
-    public User getMethodName(@PathVariable("userId")String userId) {
+    public UserResponse getMethodName(@PathVariable("userId")String userId) {
         try {
             User user = this.userRepository.findById(new ObjectId(userId));
-            System.out.println(user);
-            return user;
+            UserResponse userResponse = new UserResponse(user);
+            return userResponse;
         } catch (Exception e) {
             System.out.println("error");
             return null;

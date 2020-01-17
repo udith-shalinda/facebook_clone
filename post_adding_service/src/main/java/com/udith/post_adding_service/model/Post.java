@@ -32,7 +32,9 @@ public class Post{
             list.add(userId);
             this.likeList = list;
         }else{
-            this.likeList.add(userId);
+            if(!this.likeList.contains(userId)){
+                this.likeList.add(userId);
+            }
         }
     }
 }

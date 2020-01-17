@@ -26,6 +26,8 @@ public class PostResponse{
         this.subTitle=post.getSubTitle();
         this.userId=post.getUserId();
         this.imageLinkList=post.getImageLinks();
+        this.likeCount = post.getLikeList().size();
+        // this.CommentCount = post.getc
     }
 
 }

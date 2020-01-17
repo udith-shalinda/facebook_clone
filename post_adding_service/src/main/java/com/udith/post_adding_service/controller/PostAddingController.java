@@ -69,11 +69,12 @@ public class PostAddingController{
         return "sfsfs";
     }
 
-    @PostMapping("/addLike")
-    public String addLike(@RequestBody LikeModel likeModel){
+    @PostMapping("/addLike/{postId}/{userId}")
+    public String addLike(@PathVariable("postId")String postId,@PathVariable("userId")String userId){
         try {
-            Post post  = this.postRepository.findById(new ObjectId(likeModel.getPostId()));
-            post.addLike(likeModel.getUserId());
+            Post post  = this.postRepository.findById(new ObjectId(postId));
+            post.addLike(userId);
+            this.postRepository.save(post);
             return "successfully liked";
         } catch (Exception e) {
             return "post not found";

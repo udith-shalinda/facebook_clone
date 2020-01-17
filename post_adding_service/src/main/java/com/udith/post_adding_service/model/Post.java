@@ -26,14 +26,18 @@ public class Post{
     private int publicStatus;
 
 
-    public void addLike(String userId){
+    public boolean addLike(String userId){
         if(likeList != null || likeList.size()==0){
             List<String> list = new ArrayList<>();
             list.add(userId);
             this.likeList = list;
+            return true;
         }else{
             if(!this.likeList.contains(userId)){
                 this.likeList.add(userId);
+                return true;
+            }else{
+                return false;
             }
         }
     }

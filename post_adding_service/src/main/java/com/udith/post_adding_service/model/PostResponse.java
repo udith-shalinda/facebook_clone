@@ -27,7 +27,6 @@ public class PostResponse{
         this.userId=post.getUserId();
         this.imageLinkList=post.getImageLinks();
         this.likeCount = post.getLikeList().size();
-        // this.CommentCount = post.getc
     }
 
 }

@@ -73,9 +73,13 @@ public class PostAddingController{
     public String addLike(@PathVariable("postId")String postId,@PathVariable("userId")String userId){
         try {
             Post post  = this.postRepository.findById(new ObjectId(postId));
-            post.addLike(userId);
-            this.postRepository.save(post);
-            return "successfully liked";
+            if(post.addLike(userId)){
+                this.postRepository.save(post);
+                return "successfully liked";
+            }else{
+                return "user is already liked";
+            }
+        
         } catch (Exception e) {
             return "post not found";
         }
@@ -101,11 +105,13 @@ public class PostAddingController{
     @PostMapping("/get/{page}/{count}")
     public PostResponseList getPosts(@PathVariable("page") int page,@PathVariable("count") int count,@RequestBody LikeModel user) {
         Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
-        System.out.println(post);
         return new PostResponseList(post.getContent().stream().map(p->{
             PostResponse postResponse = new PostResponse(p);
             if(user.getUserId().equals(p.getUserId())){
                 postResponse.setOwner(true);
+            }
+            if(p.getLikeList().contains(user.getUserId())){
+                postResponse.setLiked(true);
             }
             User res = restTemplate.getForObject("http://user-service/api/user/oneUser/5e0b62023b75dd60e22edaad", User.class);
             postResponse.setUserDetails(new UserResponse(res));

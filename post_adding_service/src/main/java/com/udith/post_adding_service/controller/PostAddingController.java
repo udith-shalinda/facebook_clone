@@ -119,7 +119,7 @@ public class PostAddingController{
             if(p.getLikeList().contains(user.getUserId())){
                 postResponse.setLiked(true);
             }
-            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/5e0b62023b75dd60e22edaad", User.class);
+            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/"+user.getUserId(), User.class);
             postResponse.setUserDetails(new UserResponse(res));
             
             

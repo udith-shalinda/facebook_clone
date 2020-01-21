@@ -38,9 +38,14 @@ public class PostAddingController{
     @PostMapping("/add")
     public String addPost(@RequestBody Post post) {
         Post resPost = this.postRepository.save(post);
-        String res = restTemplate.postForObject("http://user-service/api/post/add/"
-            +post.getId().toString()+"/"+post.getUserId(),null,String.class);
-        return resPost.getId().toString()+res;
+        try {
+            String res = restTemplate.postForObject("http://user-service/api/post/add/"
+                +post.getId().toString()+"/"+post.getUserId(),null,String.class);    
+                return resPost.getId().toString()+res;
+        } catch (Exception e) {
+            //TODO: handle exception
+            return resPost.getId().toString();
+        }
     }
 
     @PostMapping("/addComment/{postId}")
@@ -117,8 +122,6 @@ public class PostAddingController{
             postResponse.setUserDetails(new UserResponse(res));
             
             
-
-
             return postResponse;
         }).collect(Collectors.toList()));
     }

@@ -2,12 +2,18 @@ package com.udith.comment_adding_service.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.udith.comment_adding_service.model.Comment;
 import com.udith.comment_adding_service.model.CommentList;
+import com.udith.comment_adding_service.model.CommentListRes;
+import com.udith.comment_adding_service.model.CommentRes;
+import com.udith.comment_adding_service.model.User;
+import com.udith.comment_adding_service.model.UserResponse;
 import com.udith.comment_adding_service.repository.CommentAddingRepository;
 
 import org.bson.types.ObjectId;
@@ -25,6 +31,8 @@ public class CommentAddingController{
 
     @Autowired
     private CommentAddingRepository commentAddingRepository;
+    @Autowired
+    private RestTemplate restTemplate; 
 
     @PostMapping("/add/{CommentListId}")
     public String postMethodName(@PathVariable("CommentListId")String CommentListId ,@RequestBody Comment userComment) {
@@ -51,9 +59,20 @@ public class CommentAddingController{
         
     }
 
-    @GetMapping("getComments/{commentListId}")
-    public CommentList getMethodName(@PathVariable("commentListId") String commentListId) {
-        return this.commentAddingRepository.findById(new ObjectId(commentListId));
+    @GetMapping("getComments/{commentListId}/{userId}")
+    public CommentListRes getMethodName(@PathVariable("commentListId") String commentListId,@PathVariable("userId")String userId) {
+
+        CommentList commentList = this.commentAddingRepository.findById(new ObjectId(commentListId));
+        
+         return new CommentListRes(commentList.getCommments().stream().map(comment->{
+            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/"+comment.getUserId(), User.class);
+            CommentRes commentRes = new CommentRes(comment);
+            commentRes.setUser(new UserResponse(res));
+            if(userId.equals(comment.getUserId())){
+                commentRes.setOwner(true);
+            }
+            return commentRes;
+         }).collect(Collectors.toList()));
     }
     
     

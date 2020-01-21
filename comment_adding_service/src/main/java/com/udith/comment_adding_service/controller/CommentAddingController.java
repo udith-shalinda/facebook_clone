@@ -31,19 +31,24 @@ public class CommentAddingController{
         System.out.println(CommentListId);
         ObjectId objectId = new ObjectId();
         userComment.setId(objectId);
-        if("firstComment".equals(CommentListId)){
+        CommentList commentList;
+        try {
+            commentList = this.commentAddingRepository.findById(new ObjectId(CommentListId));
+            commentList.addComment(userComment);
+            this.commentAddingRepository.save(commentList);
+            return commentList.getId().toString();
+        } catch (Exception e) {
+            System.out.println(e);
+            commentList = new CommentList();
+            commentList.setId(new ObjectId(CommentListId));
+
             List<Comment> comments = new ArrayList<>();
             comments.add(userComment);
-            CommentList commentList = new CommentList();
             commentList.setCommments(comments);
             CommentList comm = this.commentAddingRepository.save(commentList);
-            return comm.getId().toString();
-        }else{
-            CommentList list = this.commentAddingRepository.findById(new ObjectId(CommentListId));
-            list.addComment(userComment);
-            this.commentAddingRepository.save(list);
-            return list.getId().toString();
+            return comm.getId().toString(); 
         }
+        
     }
 
     @GetMapping("getComments/{commentListId}")

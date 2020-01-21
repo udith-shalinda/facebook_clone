@@ -17,7 +17,7 @@ public class PostResponse{
     private int likeCount;
     private int shareCount;
     private UserResponse userDetails;
-    private List<Comment> commentList;
+    private String commentId;
     private int CommentCount;
 
     public PostResponse(Post post){
@@ -27,6 +27,7 @@ public class PostResponse{
         this.userId=post.getUserId();
         this.imageLinkList=post.getImageLinks();
         this.likeCount = post.getLikeList().size();
+        this.commentId = post.getCommentsId();
     }
 
 }

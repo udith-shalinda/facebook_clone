@@ -37,6 +37,7 @@ public class PostAddingController{
 
     @PostMapping("/add")
     public String addPost(@RequestBody Post post) {
+        post.setCommentsId((new ObjectId()).toString());
         Post resPost = this.postRepository.save(post);
         try {
             String res = restTemplate.postForObject("http://user-service/api/post/add/"

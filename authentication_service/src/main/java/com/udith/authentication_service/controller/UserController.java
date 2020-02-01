@@ -99,5 +99,10 @@ public class UserController{
         this.userRepository.save(oldUser);
         return "user updated";
     }
+
+    @GetMapping("/validateUser")
+    public String validateUser() {
+        return "token";
+    }
     
 }

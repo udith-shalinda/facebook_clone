@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -101,7 +102,8 @@ public class UserController{
     }
 
     @GetMapping("/validateUser")
-    public String validateUser() {
+    public String validateUser(@RequestHeader("Authorization") String token) {
+        // System.out.println(token);
         return "token";
     }
     

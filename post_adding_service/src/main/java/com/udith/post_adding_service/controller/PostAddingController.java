@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -120,14 +121,18 @@ public class PostAddingController {
         System.out.println(token);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
-        HttpEntity request = new HttpEntity(headers);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
 
         ResponseEntity<String> verifyToken = restTemplate.exchange(
             "http://user-service/api/user/validateUser",
             HttpMethod.GET,
             request,
             String.class);
-        System.out.println(verifyToken);
+        
+        if(verifyToken.getStatusCode().value()!=200){
+            return null;
+        }
 
 
         Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));

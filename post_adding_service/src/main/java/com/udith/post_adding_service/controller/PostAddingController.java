@@ -77,23 +77,10 @@ public class PostAddingController {
 
     @PostMapping("/updatePost/{postId}")
     public String updatePost(@PathVariable("postId")String postId,@RequestBody Post post,@RequestHeader("Authorization") String token) {
-        //verify token
-        System.out.println(token);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>(headers);
-
-        ResponseEntity<String> verifyToken = restTemplate.exchange(
-            "http://user-service/api/user/validateUser",
-            HttpMethod.GET,
-            request,
-            String.class);
         
-        if(verifyToken.getStatusCode().value()!=200){
+        if(!verifyToken(token)){
             return "not Autharized";
         }
-
 
 
         Post oldPost = this.postRepository.findById(new ObjectId(postId));
@@ -125,16 +112,22 @@ public class PostAddingController {
         }
     }
 
-    @PostMapping("/reshare")
-    public String resharePost(@RequestBody LikeModel likeModel) {
+    @PostMapping("/reshare/{postId}/{userId}")
+    public String resharePost(@PathVariable("postId")String postId,@PathVariable("userId")String userId,@RequestHeader("Authorization") String token) {
+        if(!verifyToken(token)){
+            return null;
+        }
+
         try {
-            Post post = this.postRepository.findById(new ObjectId(likeModel.getPostId()));
+            Post post = this.postRepository.findById(new ObjectId(postId));
             Post newPost = new Post();
             newPost.setReshareId(post.getId().toString());
+            newPost.setUserId(userId);
             // have to add public or only friends;
             Post resPost = this.postRepository.save(newPost);
+
             String res = restTemplate.postForObject(
-                    "http://user-service/api/post/add/" + resPost.getId().toString() + "/" + post.getUserId(), null,
+                    "http://user-service/api/post/add/" + resPost.getId().toString() + "/" + userId, null,
                     String.class);
             return resPost.getId().toString() + res;
         } catch (Exception e) {
@@ -147,6 +140,37 @@ public class PostAddingController {
     public PostResponseList getPosts(@PathVariable("page") int page, @PathVariable("count") int count,
             @RequestBody LikeModel user, @RequestHeader("Authorization") String token) {
 
+        if(!verifyToken(token)){
+            return null;
+        }
+        
+        Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
+        return new PostResponseList(post.getContent().stream().map(p->{
+
+            PostResponse postResponse = new PostResponse(p);
+            if(user.getUserId().equals(p.getUserId())){
+                postResponse.setOwner(true);
+            }
+            if(p.getLikeList().contains(user.getUserId())){
+                postResponse.setLiked(true);
+            }
+            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/"+user.getUserId(), User.class);
+            postResponse.setUserDetails(new UserResponse(res));
+            
+            if(p.getReshareId()!=null){
+                Post resharedPost = this.postRepository.findById(new ObjectId(p.getReshareId()));
+                postResponse.setTitle(resharedPost.getTitle());
+                postResponse.setSubTitle(resharedPost.getSubTitle());
+                postResponse.setImageLinkList(resharedPost.getImageLinks());
+                User oldUser = restTemplate.getForObject("http://user-service/api/user/oneUser/"+user.getUserId(), User.class);
+                postResponse.setResharedOwnerUserDetails(new UserResponse(oldUser));
+            }
+            
+            return postResponse;
+        }).collect(Collectors.toList()));
+    }
+    
+    boolean verifyToken(String token){
         System.out.println(token);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
@@ -160,27 +184,13 @@ public class PostAddingController {
             String.class);
         
         if(verifyToken.getStatusCode().value()!=200){
-            return null;
+            return false;
+        }else{
+            return true;
         }
-
-
-        Page<Post> post = this.postRepository.findAll(PageRequest.of(page,count));
-        return new PostResponseList(post.getContent().stream().map(p->{
-            PostResponse postResponse = new PostResponse(p);
-            if(user.getUserId().equals(p.getUserId())){
-                postResponse.setOwner(true);
-            }
-            if(p.getLikeList().contains(user.getUserId())){
-                postResponse.setLiked(true);
-            }
-            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/"+user.getUserId(), User.class);
-            postResponse.setUserDetails(new UserResponse(res));
-            
-            
-            return postResponse;
-        }).collect(Collectors.toList()));
     }
     
-
-    
 }
+
+
+

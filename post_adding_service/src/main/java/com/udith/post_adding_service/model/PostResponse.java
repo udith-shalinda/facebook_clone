@@ -19,6 +19,7 @@ public class PostResponse{
     private UserResponse userDetails;
     private String commentId;
     private int CommentCount;
+    private UserResponse resharedOwnerUserDetails;
 
     public PostResponse(Post post){
         this.id=post.getId().toString();

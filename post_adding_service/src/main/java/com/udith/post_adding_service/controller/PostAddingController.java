@@ -22,13 +22,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @RestController
 @RequestMapping("/post")
@@ -123,6 +124,7 @@ public class PostAddingController {
             Post newPost = new Post();
             newPost.setReshareId(post.getId().toString());
             newPost.setUserId(userId);
+            newPost.setCommentsId((new ObjectId()).toString());
             // have to add public or only friends;
             Post resPost = this.postRepository.save(newPost);
 
@@ -169,6 +171,7 @@ public class PostAddingController {
             return postResponse;
         }).collect(Collectors.toList()));
     }
+
     
     boolean verifyToken(String token){
         System.out.println(token);
@@ -189,7 +192,53 @@ public class PostAddingController {
             return true;
         }
     }
+
+
+    @GetMapping("/oneUserPosts/{userId}")
+    public PostResponseList getMethodName(@PathVariable("userId")String userId,@RequestHeader("Authorization") String token) {
+        if(!verifyToken(token)){
+            return null;
+        }
+
+        try {
+            
+            
+            User response = restTemplate.getForObject("http://user-service/api/user/oneUser/"+userId, User.class);
+            System.out.println("user response taken");
+            
+            return new PostResponseList(response.getPostsIdList().stream().map(postId->{
+                Post p = this.postRepository.findById(new ObjectId(postId)); 
+                PostResponse postResponse = new PostResponse(p);
+                if(userId.equals(p.getUserId())){
+                    postResponse.setOwner(true);
+            }
+            if(p.getLikeList().contains(userId)){
+                postResponse.setLiked(true);
+            }
+            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/"+userId, User.class);
+            postResponse.setUserDetails(new UserResponse(res));
+            
+            if(p.getReshareId()!=null){
+                Post resharedPost = this.postRepository.findById(new ObjectId(p.getReshareId()));
+                postResponse.setTitle(resharedPost.getTitle());
+                postResponse.setSubTitle(resharedPost.getSubTitle());
+                postResponse.setImageLinkList(resharedPost.getImageLinks());
+                User oldUser = restTemplate.getForObject("http://user-service/api/user/oneUser/"+userId, User.class);
+                postResponse.setResharedOwnerUserDetails(new UserResponse(oldUser));
+            }
+            System.out.println(postResponse);
+            return postResponse;
+            }).collect(Collectors.toList()));
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("exceptin");
+            return null;
+        }
+        
+    }
     
+    
+
 }
 
 

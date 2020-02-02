@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,10 +75,38 @@ public class PostAddingController {
         }
     }
 
-    @PostMapping("/updatePost")
-    public String updatePost() {
-        // have to complete
-        return "sfsfs";
+    @PostMapping("/updatePost/{postId}")
+    public String updatePost(@PathVariable("postId")String postId,@RequestBody Post post,@RequestHeader("Authorization") String token) {
+        //verify token
+        System.out.println(token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+
+        ResponseEntity<String> verifyToken = restTemplate.exchange(
+            "http://user-service/api/user/validateUser",
+            HttpMethod.GET,
+            request,
+            String.class);
+        
+        if(verifyToken.getStatusCode().value()!=200){
+            return "not Autharized";
+        }
+
+
+
+        Post oldPost = this.postRepository.findById(new ObjectId(postId));
+        if(oldPost.getUserId().equals(post.getUserId())){
+            oldPost.setId(new ObjectId(postId));
+            oldPost.setTitle(post.getTitle());
+            oldPost.setSubTitle(post.getSubTitle());
+            oldPost.setImageLinks(post.getImageLinks());
+            this.postRepository.save(oldPost);
+            return "done";
+        }else{
+            return "user is not equal";
+        }
     }
 
     @PostMapping("/addLike/{postId}/{userId}")

@@ -22,7 +22,7 @@ public class StoryHandleController{
             User me = this.userRepository.findById(new ObjectId(userId));
             me.addStoryToList(storyId);
             this.userRepository.save(me);
-            return "post added successfully";
+            return "story added successfully";
         } catch (Exception e) {
             return "user is not found";
         }

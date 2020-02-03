@@ -1,4 +1,4 @@
-package com.udith.post_adding_service.model;
+package com.udith.story_service.model;
 
 import java.util.ArrayList;
 import java.util.List;

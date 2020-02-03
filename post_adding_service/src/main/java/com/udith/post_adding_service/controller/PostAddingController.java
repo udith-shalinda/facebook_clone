@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -52,7 +51,6 @@ public class PostAddingController {
                     String.class);
             return resPost.getId().toString() + res;
         } catch (Exception e) {
-            // TODO: handle exception
             return resPost.getId().toString();
         }
     }

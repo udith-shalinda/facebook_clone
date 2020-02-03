@@ -23,6 +23,7 @@ public class User{
     private List<String> sentFriendRequest = new ArrayList<>();
     private List<String> RecievedFriendRequests = new ArrayList<>();
     private List<String> postsIdList = new ArrayList<>();
+    private List<String> storyIdList = new ArrayList<>();
 
     public void addFriend(String friendId){
         if(friends== null ||friends.size()==0){
@@ -60,6 +61,15 @@ public class User{
             this.postsIdList.add(postId);
         }
     }
+    public void addStoryToList(String storyId){
+        if(storyIdList==null|| storyIdList.size()==0){
+            List<String> list = new ArrayList<>();
+            list.add(storyId);
+            this.storyIdList = list;
+        }else{
+            this.storyIdList.add(storyId);
+        }
+    }
 
 
     public void removeFriend(String friendId){
@@ -73,5 +83,8 @@ public class User{
     }
     public void removePostId(String postId){
         this.postsIdList.remove(postId);
+    }
+    public void removeStoryId(String storyId){
+        this.storyIdList.remove(storyId);
     }
 }

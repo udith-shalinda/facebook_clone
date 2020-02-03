@@ -15,6 +15,8 @@ public class UserResponse{
     private List<String> sentFriendRequest = new ArrayList<>();
     private List<String> RecievedFriendRequests = new ArrayList<>();
     private List<String> postsIdList = new ArrayList<>();
+    private List<String> storyIdList = new ArrayList<>();
+
 
     public UserResponse(User user){
         this.id = user.getId().toString();
@@ -25,5 +27,6 @@ public class UserResponse{
         this.sentFriendRequest = user.getSentFriendRequest();
         this.RecievedFriendRequests = user.getRecievedFriendRequests();
         this.postsIdList = user.getPostsIdList();
+        this.storyIdList = user.getStoryIdList();
     }
 }

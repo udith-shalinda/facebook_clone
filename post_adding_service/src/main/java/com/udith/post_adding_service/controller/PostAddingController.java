@@ -195,7 +195,7 @@ public class PostAddingController {
 
 
     @GetMapping("/oneUserPosts/{userId}")
-    public PostResponseList getMethodName(@PathVariable("userId")String userId,@RequestHeader("Authorization") String token) {
+    public PostResponseList getUsersPosts(@PathVariable("userId")String userId,@RequestHeader("Authorization") String token) {
         if(!verifyToken(token)){
             return null;
         }

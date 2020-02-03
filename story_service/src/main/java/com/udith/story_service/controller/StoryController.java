@@ -22,6 +22,14 @@ public class StoryController {
     @PostMapping(value="/add")
     public String addStory(@RequestBody Story story) {
         Story s = this.storyRepository.save(story);
+        try {
+            String res = restTemplate.postForObject(
+                    "http://user-service/api/story/add/" + story.getId().toString() + "/" + story.getUserId(), null,
+                    String.class);
+            return s.getId().toString() + res;
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
         if(s!=null){
             return "done";
         }else{

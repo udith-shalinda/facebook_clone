@@ -5,6 +5,7 @@ import com.udith.authentication_service.repository.UserRepository;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class PostHandleController{
         }
     }
 
-    @PostMapping("/remove/{postId}/{userId}")
+    @GetMapping("/remove/{postId}/{userId}")
     public String removePostFromUser(@PathVariable("postId") String postId,@PathVariable("userId") String userId){
         try {
             User me = this.userRepository.findById(new ObjectId(userId));

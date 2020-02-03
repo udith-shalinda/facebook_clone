@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 @RestController
@@ -124,6 +126,9 @@ public class PostAddingController {
             Post newPost = new Post();
             newPost.setReshareId(post.getId().toString());
             newPost.setUserId(userId);
+            newPost.setTitle(post.getTitle());
+            newPost.setSubTitle(post.getSubTitle());
+            newPost.setImageLinks(post.getImageLinks());
             newPost.setCommentsId((new ObjectId()).toString());
             // have to add public or only friends;
             Post resPost = this.postRepository.save(newPost);
@@ -161,10 +166,7 @@ public class PostAddingController {
             
             if(p.getReshareId()!=null){
                 Post resharedPost = this.postRepository.findById(new ObjectId(p.getReshareId()));
-                postResponse.setTitle(resharedPost.getTitle());
-                postResponse.setSubTitle(resharedPost.getSubTitle());
-                postResponse.setImageLinkList(resharedPost.getImageLinks());
-                User oldUser = restTemplate.getForObject("http://user-service/api/user/oneUser/"+user.getUserId(), User.class);
+                User oldUser = restTemplate.getForObject("http://user-service/api/user/oneUser/"+resharedPost.getUserId(), User.class);
                 postResponse.setResharedOwnerUserDetails(new UserResponse(oldUser));
             }
             
@@ -237,6 +239,23 @@ public class PostAddingController {
         
     }
     
+    @PostMapping(value="/delete/{postId}")
+    public String getMethodName(@PathVariable("postId") String postId,@RequestHeader("Authorization") String token) {
+        if(!verifyToken(token)){
+            return "UnAutharized access";
+        }
+
+        try {
+            Post post = this.postRepository.findById(new ObjectId(postId));
+            this.postRepository.deleteById(postId);
+
+            String response = restTemplate.getForObject("http://user-service/api/post/remove/"+post.getId().toString()+"/"+post.getUserId(), String.class);
+            System.out.println(response);
+            return response;
+        } catch (Exception e) { 
+            return "removing failed";
+        }
+    }
     
 
 }

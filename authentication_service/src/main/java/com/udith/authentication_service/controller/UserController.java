@@ -79,6 +79,9 @@ public class UserController{
         try {
             User user = this.userRepository.findById(new ObjectId(userId));
             UserResponse userResponse = new UserResponse(user);
+            if(user.getFriends()!=null && user.getFriends().contains(userId)){{
+                userResponse.setMyFirend(true);
+            }}
             return userResponse;
         } catch (Exception e) {
             System.out.println("error");

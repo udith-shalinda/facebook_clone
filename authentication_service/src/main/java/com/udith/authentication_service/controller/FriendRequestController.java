@@ -74,11 +74,15 @@ public class FriendRequestController{
     @GetMapping(value="/getRequests/{userId}")
     public FriendRequestsResponse getFriendRequests(@PathVariable("userId")String userId) {
         User me =  this.userRepository.findById(new ObjectId(userId));
-        return new FriendRequestsResponse(me.getRecievedFriendRequests().stream().map((friendId)->{
-            User friend = this.userRepository.findById(new ObjectId(friendId));
-            return new UserResponse(friend);
-        }).collect(Collectors.toList())
-        );
+        if(me.getRecievedFriendRequests()!=null){
+            return new FriendRequestsResponse(me.getRecievedFriendRequests().stream().map((friendId)->{
+                User friend = this.userRepository.findById(new ObjectId(friendId));
+                return new UserResponse(friend);
+            }).collect(Collectors.toList())
+            );
+        }else{
+            return new FriendRequestsResponse(new ArrayList<UserResponse>());
+        }
     }
 
     @GetMapping(value="/getSuggesions/{page}/{count}/{userId}")

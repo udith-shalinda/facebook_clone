@@ -16,6 +16,7 @@ public class UserResponse{
     private List<String> RecievedFriendRequests = new ArrayList<>();
     private List<String> postsIdList = new ArrayList<>();
     private List<String> storyIdList = new ArrayList<>();
+    private boolean myFirend;
 
 
     public UserResponse(User user){

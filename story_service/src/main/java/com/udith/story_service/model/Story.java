@@ -13,5 +13,6 @@ public class Story{
     private String url;
     private String userId;
     private List<String> viewsList=new ArrayList<>();
+    private UserResponse userDetails;
     
 }

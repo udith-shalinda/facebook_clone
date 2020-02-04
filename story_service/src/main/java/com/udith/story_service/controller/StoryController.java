@@ -1,10 +1,17 @@
 package com.udith.story_service.controller;
 
+import java.util.stream.Collectors;
+
 import com.udith.story_service.model.Story;
+import com.udith.story_service.model.StoryResList;
+import com.udith.story_service.model.User;
+import com.udith.story_service.model.UserResponse;
 import com.udith.story_service.repository.StoryRepository;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -57,10 +64,14 @@ public class StoryController {
         }
     }
     
-    @GetMapping(value="/get/{page}/{count}")
-    public String getStories(@PathVariable("page")int page,@PathVariable("count")int count) {
-        
-        return "new SomeData();";
+    @GetMapping(value="/get/{page}/{count}/{userId}")
+    public StoryResList getStories(@PathVariable("page")int page,@PathVariable("count")int count,@PathVariable("userId")String userId) {
+        Page<Story> storyPage = this.storyRepository.findAll(PageRequest.of(page,count));
+        return new StoryResList(storyPage.getContent().stream().map(story->{
+            User res = restTemplate.getForObject("http://user-service/api/user/oneUser/"+story.getUserId(), User.class);
+            story.setUserDetails(new UserResponse(res));
+            return story;
+        }).collect(Collectors.toList()));
     }
     
 

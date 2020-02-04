@@ -94,7 +94,10 @@ public class FriendRequestController{
         List<UserResponse> users = new ArrayList<>();
         // try {
             for(User user : userList.getContent()){
-                if(!userId.equals(user.getId().toString()) && (me.getFriends()==null || !me.getFriends().contains(user.getId().toString()))){
+                if(!userId.equals(user.getId().toString()) && (me.getFriends()==null || !me.getFriends().contains(user.getId().toString()))
+                 && (me.getSentFriendRequest()==null || !me.getSentFriendRequest().contains(user.getId().toString()))
+                 && (me.getRecievedFriendRequests()==null || !me.getRecievedFriendRequests().contains(user.getId().toString()))
+                  ){
                     users.add(new UserResponse(this.userRepository.findById(user.getId()))); 
                 }
             } 

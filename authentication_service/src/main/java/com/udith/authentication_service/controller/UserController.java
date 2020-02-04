@@ -80,7 +80,7 @@ public class UserController{
             User user = this.userRepository.findById(new ObjectId(userId));
             UserResponse userResponse = new UserResponse(user);
             if(user.getFriends()!=null && user.getFriends().contains(userId)){{
-                userResponse.setMyFirend(true);
+                userResponse.setMyFriend(true);
             }}
             return userResponse;
         } catch (Exception e) {

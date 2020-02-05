@@ -106,7 +106,26 @@ public class FriendRequestController{
         //     return "";
         // }                                                       
     }
-    
+    @GetMapping(value="/getFriends/{userId}/{page}/{count}")
+    public FriendRequestsResponse getFriends(@PathVariable("page") int page, @PathVariable("count") int count,
+                @PathVariable("userId")String userId) {
+
+        User me =  this.userRepository.findById(new ObjectId(userId)); 
+        List<UserResponse> users = new ArrayList<>();
+        if(me.getFriends()!=null && me.getFriends().size()>0){
+            for(int i =page;i<(page*count)+count;i++){    
+                try {
+                    User user = this.userRepository.findById(new ObjectId(me.getFriends().get(i)));
+                    users.add(new UserResponse(user));
+                } catch (Exception e) {
+                    System.out.println("index not found");
+                }
+            }
+        }
+        return new FriendRequestsResponse(users);
+      
+    }
+        
 
     
 

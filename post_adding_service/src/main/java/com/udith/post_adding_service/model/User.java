@@ -22,3 +22,24 @@ public class User{
 
 
 }
+
+
+// class Animal{
+//     public String name;
+//     public int age;
+
+//     public void eat(){
+//         //
+//     }
+// }
+
+// class test{
+
+//     public void name() {
+//         Animal dog = new Animal();
+//         dog.name = "name";
+//         dog.age = 12;
+//         dog.eat();
+//     }
+// }
+
